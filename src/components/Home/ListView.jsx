@@ -5,11 +5,11 @@ import TaskForm from "./TaskForm";
 import initialTasks from "../../lib/data/ListViewData";
 
 const ListView = () => {
-
-const [tasks, setTasks] = useState(initialTasks);
+  const [tasks, setTasks] = useState(initialTasks);
   const [showModal, setShowModal] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
   const [activeDropdown, setActiveDropdown] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null);
   const [formData, setFormData] = useState({
     project: "",
     type: "",
@@ -17,9 +17,19 @@ const [tasks, setTasks] = useState(initialTasks);
     hours: 12,
   });
 
-  const projectOptions = ["Project Name","Project Gama", "Project Alpha", "Project Beta"];
-  const typeOptions = ["Work Type","Bug fixes", "Development", "Testing", "Design"];
-
+  const projectOptions = [
+    "Project Name",
+    "Project Gama",
+    "Project Alpha",
+    "Project Beta",
+  ];
+  const typeOptions = [
+    "Work Type",
+    "Bug fixes",
+    "Development",
+    "Testing",
+    "Design",
+  ];
   const totalHours = tasks.reduce((sum, task) => sum + task.hours, 0);
 
   const groupedTasks = tasks.reduce((groups, task) => {
@@ -33,6 +43,7 @@ const [tasks, setTasks] = useState(initialTasks);
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!formData.description.trim()) return;
+
     if (editingTask) {
       setTasks(
         tasks.map((task) =>
@@ -50,7 +61,7 @@ const [tasks, setTasks] = useState(initialTasks);
     } else {
       const newTask = {
         id: Date.now(),
-        date: "Jan 24",
+        date: selectedDate || "Jan 24",
         project: formData.project,
         task: formData.description,
         hours: formData.hours,
@@ -58,12 +69,14 @@ const [tasks, setTasks] = useState(initialTasks);
       };
       setTasks([...tasks, newTask]);
     }
+
     resetForm();
   };
 
   const resetForm = () => {
     setShowModal(false);
     setEditingTask(null);
+    setSelectedDate(null);
     setFormData({
       project: "Project Name",
       type: "Bug fixes",
@@ -80,6 +93,7 @@ const [tasks, setTasks] = useState(initialTasks);
       description: task.task,
       hours: task.hours,
     });
+    setSelectedDate(task.date);
     setShowModal(true);
     setActiveDropdown(null);
   };
@@ -94,12 +108,12 @@ const [tasks, setTasks] = useState(initialTasks);
   };
 
   return (
-    <div className=" lg:pt-8">
+    <div className="lg:pt-8">
       <div className="max-w-6xl mx-auto p-5 bg-white rounded-lg shadow-xl">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
           <div>
-            <h1 className="text-2xl  md:text-3xl font-bold text-gray-900">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
               This week's timesheet
             </h1>
             <p className="text-gray-600 mt-1">21 - 26 January, 2024</p>
@@ -120,11 +134,11 @@ const [tasks, setTasks] = useState(initialTasks);
           </div>
         </div>
 
-
-        <div className="">
+        {/* Task List */}
+        <div>
           {Object.entries(groupedTasks).map(([date, dateTasks]) => (
-            <div key={date} className="">
-              <div className="p-4 md:p-6 flex flex-col lg:flex-row gap-5 items-center  ">
+            <div key={date}>
+              <div className="p-4 md:p-6 flex flex-col lg:flex-row gap-5 items-center">
                 <h3 className="text-lg font-semibold text-gray-800 mb-2 w-[100px]">
                   {date}
                 </h3>
@@ -174,6 +188,7 @@ const [tasks, setTasks] = useState(initialTasks);
                   <button
                     onClick={() => {
                       setEditingTask(null);
+                      setSelectedDate(date);
                       setShowModal(true);
                     }}
                     className="w-full flex items-center justify-center gap-2 p-3 border-2 border-dashed border-blue-300 rounded-md text-blue-600 hover:border-blue-400 hover:bg-blue-50 transition"
@@ -188,7 +203,6 @@ const [tasks, setTasks] = useState(initialTasks);
         </div>
       </div>
 
-
       <TaskForm
         isOpen={showModal}
         onClose={resetForm}
@@ -200,7 +214,7 @@ const [tasks, setTasks] = useState(initialTasks);
         editing={!!editingTask}
       />
 
-
+  
       {activeDropdown && (
         <div
           className="fixed inset-0 z-0"
