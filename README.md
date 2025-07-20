@@ -13,6 +13,21 @@ pnpm dev
 # or
 bun dev
 ```
+Usage Instructions
+
+Before using this application, you must sign up and log in using a valid email ID and password.
+Only authenticated users can access the main features of the app.
+
+    Go to the Signup page to create a new account.
+
+    After successful registration, use your credentials to log in.
+
+    Once logged in, you will be redirected to the dashboard/home page.
+
+
+
+
+
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
